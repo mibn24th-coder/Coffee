@@ -58,9 +58,11 @@
                 </button>
             </div>
             <div class="modal-body">
+                <input type="hidden" id="GroupId" name="GroupId" />
                 <select id="CategoryId" name="CategoryId" class="form-control">
                     <option value="">--- Chọn nhóm quyền ---</option>
                 </select>
+                <div id="RoleList"></div>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -204,10 +206,37 @@
            }
            $(document).on("click", "a.btnAuthorized", function () {
                let id = $(this).data("id");
+               $("#GroupId").val(id);
                LoadCategory();
                $("#modal-authorized").modal('show');
            });
-           $("#Catego")
+           $("#CategoryId").change(function () {
+               let CategoryId = $(this).val();
+               let GroupId = $("#GroupId").val();
+               $.getJSON("/Admin/Role/GetAllByCategory", {
+                   CategoryId: CategoryId
+               }, function (roles) {
+                   $("#RoleList").html("");
+                   roles.forEach((item) => {
+                       $('<div class="custom-control custom-switch">' +
+                           '<input type="checkbox" class="custom-control-input Role" ' + (item.groupId == GroupId ? "checked" : "") + ' id="' + item.id + '" data-id="' + item.id + '">' +
+                           '<label class="custom-control-label" for="' + item.id + '">' + item.name + '</label>' +
+                           '</div>').appendTo($("#RoleList"));
+                   });
+               })
+           });
+           $(document).on("change", "input.Role", function () {
+               let RoleId = $(this).data("id");
+               let GroupId = $("#GroupId").val();
+               $.get("/Admin/Authorized/Save", {
+                   GroupId: GroupId,
+                   RoleId: RoleId
+               }, function (data) {
+                   toastr.success('Thông báo: Cập nhật quyền thành công.');
+               }).fail(function () {
+                   toastr.error('Lõi: Không có quyền truy cập chức năng này.');
+               })
+           });
         });
     </script>
  }

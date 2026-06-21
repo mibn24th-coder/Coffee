@@ -106,13 +106,18 @@ namespace Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var item = await _dbContext.Members.FindAsync(id);
+            var memberInArticle = await _dbContext.Articles.Where(m => m.CreatedBy == id).FirstOrDefaultAsync();
+            if (memberInArticle == null)
+            {
+                var item = await _dbContext.Members.FindAsync(id);
 
-            _dbContext.Entry(item).State = EntityState.Deleted;
+                _dbContext.Entry(item).State = EntityState.Deleted;
 
-            await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
 
-            return Ok(true);
+                return Ok(true);
+            }
+            return Ok(false);
         }
         [HttpGet]
         public IActionResult Login()

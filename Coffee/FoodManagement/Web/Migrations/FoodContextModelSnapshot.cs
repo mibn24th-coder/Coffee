@@ -90,7 +90,7 @@ namespace Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("860ca080-aa8c-4a0f-9d90-0071068a54c5"),
+                            Id = new Guid("2a32ccf4-37ad-4cc7-95df-d7fbb19e4fd6"),
                             GroupId = new Guid("eb6b4076-ae9a-4d83-9522-f71760bf27b4"),
                             RoleId = new Guid("b643e139-b6bf-41d7-a251-ad3bd2ae5574")
                         });
@@ -133,14 +133,14 @@ namespace Web.Migrations
                         {
                             Id = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3765),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(428),
                             Name = "Root"
                         },
                         new
                         {
                             Id = new Guid("4d84c1f5-3daa-439a-93cd-8b60dc29192d"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3768),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(431),
                             Name = "Authorized",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         },
@@ -148,7 +148,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("fe7f810c-72b9-44cb-ab4b-3faf28cdc443"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3771),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(470),
                             Name = "Nhóm quyền",
                             ParentId = new Guid("4d84c1f5-3daa-439a-93cd-8b60dc29192d")
                         },
@@ -156,7 +156,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("348b75cd-56a7-4094-97f1-284ab85c3ab9"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3774),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(473),
                             Name = "Article",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         },
@@ -164,7 +164,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("d4f86670-a689-4cc2-90df-0e89ba79276d"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3777),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(476),
                             Name = "Product",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         });
@@ -248,7 +248,7 @@ namespace Web.Migrations
                         new
                         {
                             Id = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 6, 18, 22, 15, 49, 891, DateTimeKind.Local).AddTicks(3718),
+                            CreatedOn = new DateTime(2026, 6, 21, 12, 36, 19, 943, DateTimeKind.Local).AddTicks(394),
                             Email = "mibn.24th@sv.dla.edu.vn",
                             GroupId = new Guid("eb6b4076-ae9a-4d83-9522-f71760bf27b4"),
                             LoginName = "bui.mi",
@@ -270,9 +270,21 @@ namespace Web.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Intro")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Picture")
                         .HasMaxLength(50)
@@ -332,6 +344,20 @@ namespace Web.Migrations
                             CategoryId = new Guid("fe7f810c-72b9-44cb-ab4b-3faf28cdc443"),
                             Code = "edit-group",
                             Name = "Cập nhật"
+                        },
+                        new
+                        {
+                            Id = new Guid("6157c9c4-23b3-47e3-bae7-38388367a439"),
+                            CategoryId = new Guid("fe7f810c-72b9-44cb-ab4b-3faf28cdc443"),
+                            Code = "save-group",
+                            Name = "Lưu"
+                        },
+                        new
+                        {
+                            Id = new Guid("4fe07974-7ad0-49e4-8485-8a0b8dfac350"),
+                            CategoryId = new Guid("fe7f810c-72b9-44cb-ab4b-3faf28cdc443"),
+                            Code = "delete-group",
+                            Name = "Xóa"
                         });
                 });
 
