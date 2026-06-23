@@ -9,11 +9,11 @@ using Web.Areas.Admin.Extensions;
 namespace Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class ProductController : Controller
+    public class NewsController : Controller
     {
         private readonly FoodContext _dbContext;
         private IWebHostEnvironment _environment;
-        public ProductController(FoodContext dbContext, IWebHostEnvironment environment)
+        public NewsController(FoodContext dbContext, IWebHostEnvironment environment)
         {
             _dbContext = dbContext;
             _environment = environment;
@@ -25,7 +25,7 @@ namespace Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> getList(jDatatable model)
         {
-            var items = (from i in _dbContext.Products select i);
+            var items = (from i in _dbContext.Articles select i);
             int recordsTotal = 0;
             if (!string.IsNullOrEmpty(model.columns[model.order[0].column].name) && !string.IsNullOrEmpty(model.order[0].dir))
             {
@@ -40,9 +40,7 @@ namespace Web.Areas.Admin.Controllers
             {
                 i.Id,
                 i.Title,
-                categoryName = i.Category.Name,
-                i.Price,
-                i.Picture
+                i.CreatedOn
             }).Skip(model.start).Take(model.length).ToListAsync();
             var jsonData = new { draw = model.draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
             return Ok(jsonData);
@@ -50,48 +48,47 @@ namespace Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> getItem(Guid id)
         {
-            if (_dbContext.Products == null)
+            if (_dbContext.Articles == null)
                 return NotFound();
-            var item = await _dbContext.Products.FindAsync(id);
+            var item = await _dbContext.Articles.FindAsync(id);
             if (item == null)
                 return NotFound();
             return Ok(item);
         }
         [HttpPost]
-        public async Task<IActionResult> Save(ProductViewModel model, IFormFile Picture)
+        public async Task<IActionResult> Save(NewsViewModel model, IFormFile Picture)
         {
-            Core.Database.Models.Product item;
+            Core.Database.Models.Article item;
             var loggedMember = HttpContext.Session.GetObject<Member>("member");
             if (model.Id == null)
             {
-                item = new Core.Database.Models.Product();
+                item = new Core.Database.Models.Article();
                 item.Id = Guid.NewGuid();
                 item.CreatedBy = loggedMember.Id;
                 item.CreatedOn = DateTime.Now;
-                await _dbContext.Products.AddAsync(item);
+                await _dbContext.Articles.AddAsync(item);
             }
             else
             {
-                item = await _dbContext.Products.FindAsync(model.Id);
+                item = await _dbContext.Articles.FindAsync(model.Id);
                 item.ModifiedOn = DateTime.Now;
                 item.ModifiedBy = loggedMember.Id;
             }
             item.Title = model.Title;
-            item.Intro = model.Intro;
             item.Content = model.Content;
-            item.Price = model.Price;
+            item.Keyword = model.Keyword;
+            item.Description = model.Description;
 
             if (Picture != null)
             {
-                var path = Path.Combine(this._environment.WebRootPath, "img/products/", Picture.FileName);
+                var path = Path.Combine(this._environment.WebRootPath, "img/news/", Picture.FileName);
                 using (FileStream stream = new FileStream(path, FileMode.Create))
                 {
                     await Picture.CopyToAsync(stream);
                     stream.Close();
                 }
-                item.Picture = "/img/products/" + Picture.FileName;
+                item.Picture = "/img/news/" + Picture.FileName;
             }
-            item.CategoryId = model.CategoryId;
             await _dbContext.SaveChangesAsync();
             return Ok(item);
         }
@@ -100,11 +97,12 @@ namespace Web.Areas.Admin.Controllers
         {
             try
             {
-                var item = await _dbContext.Products.FindAsync(id);
+                var item = await _dbContext.Articles.FindAsync(id);
                 string path = this._environment.WebRootPath + item.Picture;
                 _dbContext.Entry(item).State = EntityState.Deleted;
                 await _dbContext.SaveChangesAsync();
-                if(System.IO.File.Exists(path)) {
+                if (System.IO.File.Exists(path))
+                {
                     System.IO.File.Delete(path);
                 }
                 return Ok(true);
@@ -114,6 +112,20 @@ namespace Web.Areas.Admin.Controllers
                 return Ok(false);
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> UploadPicture(IFormFile Picture)
+        {
+            if (Picture != null)
+            {
+                var path = Path.Combine(this._environment.WebRootPath, "img/news/", Picture.FileName);
+                using (FileStream stream = new FileStream(path, FileMode.Create))
+                {
+                    await Picture.CopyToAsync(stream);
+                    stream.Close();
+                }
+                return Ok("/img/news/" + Picture.FileName);
+            }
+            return Ok("");
+        }
     }
 }
-
