@@ -25,5 +25,6 @@ namespace Core.Database.Models
         public DateTime? CreatedOn { get; set; }
         public Guid? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public ICollection<Details> Details { get; set; } = new HashSet<Details>();
     }
 }
