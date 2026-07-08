@@ -30,6 +30,7 @@
     <!-- Template Stylesheet -->
     <link href="/css/style.css" rel="stylesheet">
     @await RenderSectionAsync("Css", required: false)
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 
 <body>
@@ -43,7 +44,7 @@
         <div class="row gx-0 align-items-center d-none d-lg-flex">
             <div class="col-lg-6 px-5 text-start">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a class="small text-light" href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a class="small text-light" href="#">Trang chủ</a></li>
                     <li class="breadcrumb-item"><a class="small text-light" href="#">Career</a></li>
                     <li class="breadcrumb-item"><a class="small text-light" href="#">Terms</a></li>
                     <li class="breadcrumb-item"><a class="small text-light" href="#">Privacy</a></li>
@@ -63,18 +64,19 @@
     <!-- Topbar End -->
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top py-lg-0 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
-        <a href="index.html" class="navbar-brand ms-4 ms-lg-0">
-            <h1 class="text-primary m-0">Baker</h1>
+        <a href="@Url.Action("Index", "Home")" class="navbar-brand ms-4 ms-lg-0">
+            <h1 class="text-primary m-0">Coffee House</h1>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav mx-auto p-4 p-lg-0">
-                <a href="index.html" class="nav-item nav-link active">Home</a>
-                <a href="about.html" class="nav-item nav-link">About</a>
-                <a href="service.html" class="nav-item nav-link">Services</a>
-                <a href="product.html" class="nav-item nav-link">Products</a>
+                <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Trang chủ</a>
+                <a href="@Url.Action("Index", "About")" class="nav-item nav-link">Giới thiệu</a>
+                <a href="@Url.Action("Index", "Service")" class="nav-item nav-link">Dịch vụ</a>
+                <a href="@Url.Action("Index", "Product")" class="nav-item nav-link">Sản phẩm</a>
+                <a href="product.html" class="nav-item nav-link">Articles</a>
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu m-0">
@@ -177,7 +179,6 @@
 
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/lib/wow/wow.min.js"></script>
     <script src="/lib/easing/easing.min.js"></script>
@@ -188,5 +189,3 @@
     <!-- Template Javascript -->
     <script src="/js/main.js"></script>
 </body>
-
-</html>

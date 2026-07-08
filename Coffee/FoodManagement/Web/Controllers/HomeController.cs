@@ -1,12 +1,26 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Web.Models;
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("About")] 
+        public IActionResult About()
+        {
+            return View();
+        }
+        [Route("Service")]
+        public IActionResult Service()
+        {
+            return View();
+        }
+        [Route("Article")]
+        public IActionResult Article()
         {
             return View();
         }
