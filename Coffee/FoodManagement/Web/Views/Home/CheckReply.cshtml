@@ -1,0 +1,89 @@
+﻿@model List<Web.Models.EF.Contact>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Xem Phản Hồi";
+    Layout = "~/Views/Shared/_Site.cshtml";
+
+    // Lấy Email từ Session hoặc Identity để check hiển thị ngoài giao diện View
+    var sessionEmail = Context.Session.GetString("UserEmail");
+    var userEmail = !string.IsNullOrEmpty(sessionEmail) ? sessionEmail : (User.Identity?.IsAuthenticated == true ? User.Identity.Name : null);
+}
+
+<!-- PHẦN HEADER BẢN TRƯỚC -->
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown mb-3">Xem Phản Hồi</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="/Contact">Liên hệ</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">Xem Phản Hồi</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container mt-5" style="padding-bottom: 100px;">
+
+    @if (!string.IsNullOrEmpty(userEmail))
+    {
+        <!-- NẾU ĐÃ ĐĂNG NHẬP: Ẩn hoàn toàn ô nhập email cồng kềnh -->
+        <div class="text-center mb-5">
+            <h2 class="mb-2">Lịch Sử Phản Hồi Của Bạn</h2>
+            <p class="text-muted">Hệ thống tự động hiển thị phản hồi gửi từ Email: <strong class="text-primary">@userEmail</strong></p>
+        </div>
+    }
+    else
+    {
+        <!-- NẾU CHƯA ĐĂNG NHẬP: Hiện ô nhập để tra cứu thủ công -->
+        <h2 class="text-center mb-4">Tra Cứu Phản Hồi Liên Hệ</h2>
+        <form action="/CheckReply" method="GET" class="row justify-content-center mb-5">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="email" name="email" value="@ViewBag.EmailSearch" class="form-control" placeholder="Nhập chính xác Email bạn đã dùng để liên hệ..." required />
+                    <button type="submit" class="btn btn-primary">Tìm kiếm phản hồi</button>
+                </div>
+            </div>
+        </form>
+    }
+
+    <!-- PHẦN DANH SÁCH HIỂN THỊ PHẢN HỒI -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                @foreach (var item in Model)
+                {
+                    <div class="card mb-4 shadow-sm border-0 bg-light">
+                        <div class="card-body p-4">
+                            <h5 class="text-primary">📌 Tiêu đề: @item.Title</h5>
+                            <p class="text-muted mb-2"><small>Gửi ngày: @item.CreatedOn.ToString("dd/MM/yyyy HH:mm")</small></p>
+                            <p class="mb-3 text-secondary" style="font-style: italic;">" @item.Message "</p>
+
+                            <hr />
+
+                            @if (item.IsReplied)
+                            {
+                                <div class="p-3 rounded bg-white" style="border-left: 4px solid #198754;">
+                                    <h6 class="text-success font-weight-bold">💬 Phản hồi từ Coffee House:</h6>
+                                    <p class="mb-1 text-dark">@item.ReplyMessage</p>
+                                    <small class="text-muted">Phản hồi lúc: @item.ReplyOn?.ToString("dd/MM/yyyy HH:mm")</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="p-2 text-warning">
+                                    <i class="fa fa-clock"></i> Đội ngũ hỗ trợ đang xử lý tin nhắn của bạn, vui lòng quay lại sau...
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ViewBag.EmailSearch) || !string.IsNullOrEmpty(userEmail))
+    {
+        <p class="text-center text-danger">Không tìm thấy lịch sử lời nhắn liên hệ nào thuộc Email này.</p>
+    }
+</div>

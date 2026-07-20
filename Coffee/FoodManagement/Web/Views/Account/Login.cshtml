@@ -1,0 +1,104 @@
+﻿@{
+    Layout = "~/Views/Shared/_Site.cshtml";
+    ViewBag.Title = "Đăng nhập";
+}
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown">
+            Đăng nhập
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">
+                    Đăng nhập
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-5">
+
+
+            <div class="card shadow p-4">
+
+
+                <h2 class="text-center mb-4">
+                    Đăng nhập
+                </h2>
+
+
+
+                <form method="post">
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Tên đăng nhập
+                        </label>
+
+                        <input name="loginName"
+                               class="form-control"
+                               placeholder="Nhập tên đăng nhập" />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Mật khẩu
+                        </label>
+
+                        <input name="password"
+                               type="password"
+                               class="form-control"
+                               placeholder="Nhập mật khẩu" />
+
+                    </div>
+
+
+
+                    <button class="btn btn-warning w-100">
+
+                        Đăng nhập
+
+                    </button>
+
+
+
+                    <div class="text-center mt-3">
+
+                        Chưa có tài khoản?
+
+                        <a asp-controller="Account"
+                           asp-action="Register">
+
+                            Đăng ký
+
+                        </a>
+
+                    </div>
+
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>

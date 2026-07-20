@@ -15,6 +15,7 @@
 	<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 	<!-- Theme style -->
 	<link rel="stylesheet" href="/css/adminlte.min.css">
+	<link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css" />
 	@await RenderSectionAsync("Css", required: false)
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -254,6 +255,32 @@
 									</a>
 								</li>
 							</ul>
+							<ul class="nav nav-treeview">
+								<li class="nav-item">
+									<a href="@Url.Action("Index", "Customer", new{area = "Admin"})" class="nav-link">
+										<i class="nav-icon fas fa-users"></i>
+										<p>Khách hàng</p>
+									</a>
+								</li>
+							</ul>
+							<ul class="nav nav-treeview">
+								<li class="nav-item">
+									<a href="@Url.Action("Index","Voucher",new { area="Admin"})"
+									   class="nav-link">
+										<i class="fas fa-ticket-alt nav-icon"></i>
+										<p>Khuyến mãi</p>
+									</a>
+								</li>
+							</ul>
+							<ul class="nav nav-treeview">
+								<li class="nav-item">
+									<a href="@Url.Action("Index","Contact",new { area="Admin"})"
+									   class="nav-link">
+										<i class="far fa-circle nav-icon text-info"></i>
+										<p>Liên hệ</p>
+									</a>
+								</li>
+							</ul>
 						</li>
 						<li class="nav-item">
 							<a href="#" class="nav-link">
@@ -356,8 +383,10 @@
 	<script src="/plugins/jquery/jquery.min.js"></script>
 	<!-- Bootstrap 4 -->
 	<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-	@await RenderSectionAsync("Js", required: false)
 	<!-- AdminLTE App -->
+	<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+	<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+	@await RenderSectionAsync("Js", required: false)
 	<script src="/js/adminlte.js"></script>
 	<script>
 		$(function() {

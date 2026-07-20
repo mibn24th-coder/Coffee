@@ -16,8 +16,11 @@ namespace Core.Database.Models
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
         [ForeignKey("CustomerId")]
-        public Guid? CustomerId { get; set; }
+        public Guid CustomerId { get; set; }
         public Customer? Customer { get; set; }
+        public string? Status { get; set; }
+        public decimal? DiscountAmount { get; set; }
+        public string? DiscountCode { get; set; }
         public ICollection<Details> Details { get; set; } = new HashSet<Details>();
     }
 }

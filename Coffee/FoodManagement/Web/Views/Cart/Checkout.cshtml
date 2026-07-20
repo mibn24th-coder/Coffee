@@ -1,0 +1,268 @@
+﻿@model List<Core.Database.Models.CartItem>
+@using Web.Areas.Admin.Extensions
+@using Core.Database.Models
+@using Microsoft.AspNetCore.Http
+
+@{
+    var customer = Context.Session.GetObject<Customer>("customer");
+}
+
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/_Site.cshtml";
+
+    decimal total = Model.Sum(x => (x.Price ?? 0) * x.Quantity);
+
+    // Lấy thông tin giảm giá từ Session (được lưu sau khi áp dụng thành công ở giỏ hàng)
+    decimal discount = 0;
+    string appliedVoucher = Context.Session.GetString("AppliedVoucher");
+    string discountStr = Context.Session.GetString("DiscountAmount");
+
+    if (!string.IsNullOrEmpty(discountStr))
+    {
+        decimal.TryParse(discountStr, out discount);
+    }
+
+    decimal finalTotal = total - discount;
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-6 my-6 mt-0 wow fadeIn"
+     data-wow-delay="0.1s">
+    <div class="container text-center">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">
+            Xác nhận thanh toán
+        </h1>
+
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item">
+                    <a class="text-white" href="/">Trang chủ</a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a class="text-white" href="/Cart">Giỏ hàng</a>
+                </li>
+
+                <li class="breadcrumb-item text-primary active">
+                    Thanh toán
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<form asp-controller="Cart" asp-action="Checkout" method="post">
+    <input type="hidden" name="DiscountCode" value="@appliedVoucher" />
+    <input type="hidden" name="DiscountAmount" value="@discount" />
+    <div class="container py-5">
+
+        <div class="row">
+
+            <!-- Thông tin khách hàng -->
+            <div class="col-lg-7 mb-4">
+
+                <div class="card shadow">
+
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            Thông tin khách hàng
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+                            <label class="form-label">Họ và tên</label>
+                            <input type="text"
+                                   name="CustomerName"
+                                   class="form-control"
+                                   value="@customer?.Name">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="text"
+                                   name="Phone"
+                                   class="form-control"
+                                   value="@customer?.Phone">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Địa chỉ giao hàng</label>
+                            <input type="text"
+                                   name="Address"
+                                   class="form-control"
+                                   value="@customer?.Address">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea name="Note"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Ghi chú nếu có"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Đơn hàng -->
+            <div class="col-lg-5">
+
+                <div class="card shadow">
+
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            Đơn hàng của bạn
+                        </h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        @foreach (var item in Model)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+
+                                <span>
+                                    @item.Title x @item.Quantity
+                                </span>
+
+                                <strong>
+                                    @(((item.Price ?? 0) * item.Quantity).ToString("N0")) đ
+                                </strong>
+
+                            </div>
+                        }
+
+                        <hr />
+
+                        <!-- Phần hiển thị hóa đơn chi tiết -->
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tạm tính:</span>
+                            <span>@total.ToString("N0") đ</span>
+                        </div>
+
+                        @if (discount > 0)
+                        {
+                            <div class="d-flex justify-content-between mb-2 text-danger">
+                                <span>Giảm giá (@appliedVoucher):</span>
+                                <span>- @discount.ToString("N0") đ</span>
+                            </div>
+                        }
+
+                        <hr />
+
+                        <h4 class="text-end text-danger fw-bold">
+                            Tổng thanh toán:
+                            @finalTotal.ToString("N0") đ
+                        </h4>
+
+                        <hr />
+
+                        <h5 class="mb-3">
+                            Phương thức thanh toán
+                        </h5>
+
+                        <div class="form-check mb-2">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="PaymentMethod"
+                                   value="COD"
+                                   checked>
+
+                            <label class="form-check-label">
+                                Thanh toán khi nhận hàng (COD)
+                            </label>
+
+                        </div>
+
+                        <div class="form-check mb-3">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="PaymentMethod"
+                                   value="QR">
+
+                            <label class="form-check-label">
+                                Thanh toán qua QR Ngân hàng
+                            </label>
+
+                        </div>
+
+
+                        <!-- QR -->
+                        <div id="qrArea" style="display:none;">
+
+                            <div class="text-center mb-3">
+
+                                <img src="/img/payment/QR.jpg"
+                                     alt="QR Techcombank"
+                                     class="img-fluid rounded shadow"
+                                     style="max-width:280px;" />
+
+                            </div>
+
+                            <table class="table table-bordered">
+
+                                <tr>
+                                    <th>Ngân hàng</th>
+                                    <td>Techcombank</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Số tài khoản</th>
+                                    <td>5227022006</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Chủ tài khoản</th>
+                                    <td>BUI NGOC THAO MI</td>
+                                </tr>
+
+
+                            </table>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 btn-lg">
+
+                            <i class="fa fa-check-circle"></i>
+
+                            Đặt hàng
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        $('input[name="PaymentMethod"]').change(function () {
+
+            if ($(this).val() == "QR") {
+                $("#qrArea").slideDown();
+            }
+            else {
+                $("#qrArea").slideUp();
+            }
+
+        });
+
+    });
+</script>

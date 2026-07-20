@@ -1,0 +1,164 @@
+﻿@model Core.Database.Models.Order
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_Site.cshtml";
+
+    var customer = ViewBag.Customer as Core.Database.Models.Customer;
+    var details = ViewBag.OrderDetails as List<Core.Database.Models.Details>;
+
+    decimal subTotal = 0;
+    if (details != null)
+    {
+        foreach (var d in details)
+        {
+            subTotal += (d.Price ?? 0) * (d.Amount ?? 0);
+        }
+    }
+
+    // Lấy giá trị giảm giá từ Model
+    decimal discount = Model.DiscountAmount ?? 0;
+
+    // Tính giá trị sau khi giảm (đây là cơ sở để tính thuế)
+    decimal priceAfterDiscount = subTotal - discount;
+    if (priceAfterDiscount < 0) priceAfterDiscount = 0;
+
+    decimal tax = priceAfterDiscount * 0.1m;
+    decimal shipping = 30000;
+
+    // Tổng cuối cùng
+    decimal totalOrder = priceAfterDiscount + tax + shipping;
+}
+
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown">Chi tiết đơn hàng</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="/Order/History">Lịch sử đơn hàng</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">Chi tiết đơn hàng</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="invoice p-4 bg-white shadow-sm rounded border">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="font-weight-bold text-secondary text-uppercase border-bottom pb-3">
+                    <i class="fas fa-file-invoice text-warning mr-2"></i> Chi tiết đơn hàng của bạn
+                    <small class="float-right text-muted font-weight-normal" style="font-size:14px;">
+                        Ngày đặt: @(Model.CreatedOn.HasValue ? Model.CreatedOn.Value.ToString("dd/MM/yyyy HH:mm") : "---")
+                    </small>
+                </h4>
+            </div>
+        </div>
+
+        <div class="row invoice-info mb-4">
+            <div class="col-sm-6 invoice-col border-right">
+                <span class="text-muted text-uppercase small font-weight-bold">Thông tin giao hàng:</span>
+                @if (customer != null)
+                {
+                    <address class="mt-2">
+                        <strong class="text-dark h5">@customer.Name</strong><br>
+                        <span class="text-secondary"><i class="fas fa-map-marker-alt mr-2 mt-2"></i>Địa chỉ: @customer.Address</span><br>
+                        <span class="text-secondary"><i class="fas fa-phone mr-2 mt-2"></i>Điện thoại: @customer.Phone</span>
+                    </address>
+                }
+            </div>
+            <div class="col-sm-6 invoice-col text-sm-right">
+                <span class="text-muted text-uppercase small font-weight-bold">Thông tin hóa đơn:</span>
+                <div class="mt-2">
+                    <b>Mã đơn hàng:</b> <span class="text-primary font-weight-bold">#@Model.Id.ToString().ToUpper()</span><br>
+                    <b>Trạng thái đơn:</b>
+                    @if (Model.Status == "Đang giao")
+                    {
+                        <span class="badge bg-primary p-2 text-white">Đang giao</span>
+                    }
+                    else if (Model.Status == "Đang chuẩn bị")
+                    {
+                        <span class="badge bg-info p-2 text-dark">Đang chuẩn bị</span>
+                    }
+                    else if (Model.Status == "Đã hoàn thành")
+                    {
+                        <span class="badge bg-success p-2 text-white">Đã hoàn thành</span>
+                    }
+                    else if (Model.Status == "Đã hủy")
+                    {
+                        <span class="badge bg-danger p-2 text-white">Đã hủy</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning p-2 text-dark">@(Model.Status ?? "Chờ duyệt")</span>
+                    }<br>
+                    <span class="text-muted small">Cập nhật lúc: @(Model.UpdatedOn.HasValue ? Model.UpdatedOn.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa có cập nhật mới")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 table-responsive">
+                <table class="table table-sm mb-0 table-borderless">
+                    <tr>
+                        <th class="text-secondary font-weight-normal">Tiền sản phẩm:</th>
+                        <td class="text-right font-weight-bold text-dark">@(subTotal.ToString("N0")) đ</td>
+                    </tr>
+                    <!-- Thêm dòng này vào -->
+                    @if (discount > 0)
+                    {
+                        <tr>
+                            <th class="text-success font-weight-normal">Giảm giá (@Model.DiscountCode):</th>
+                            <td class="text-right font-weight-bold text-success"> - @(discount.ToString("N0")) đ</td>
+                        </tr>
+                    }
+                    <tr>
+                        <th class="text-secondary font-weight-normal">Thuế (10% VAT):</th>
+                        <td class="text-right font-weight-bold text-dark">@(tax.ToString("N0")) đ</td>
+                    </tr>
+                    <tr>
+                        <th class="text-secondary font-weight-normal">Phí vận chuyển:</th>
+                        <td class="text-right font-weight-bold text-dark">@(shipping.ToString("N0")) đ</td>
+                    </tr>
+                    <tr class="border-top">
+                        <th class="text-danger font-weight-bold h5 pt-2">Tổng thanh toán:</th>
+                        <td class="text-right text-danger font-weight-bold h5 pt-2">@(totalOrder.ToString("N0")) đ</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-4 justify-content-end">
+            <div class="col-md-5">
+                <div class="card border-0 bg-light p-3 shadow-sm rounded">
+                    <table class="table table-sm mb-0 table-borderless">
+                        <tr>
+                            <th class="text-secondary font-weight-normal">Tiền sản phẩm:</th>
+                            <td class="text-right font-weight-bold text-dark">@(subTotal.ToString("N0")) đ</td>
+                        </tr>
+                        <tr>
+                            <th class="text-secondary font-weight-normal">Thuế (10% VAT):</th>
+                            <td class="text-right font-weight-bold text-dark">@(tax.ToString("N0")) đ</td>
+                        </tr>
+                        <tr>
+                            <th class="text-secondary font-weight-normal">Phí vận chuyển:</th>
+                            <td class="text-right font-weight-bold text-dark">@(shipping.ToString("N0")) đ</td>
+                        </tr>
+                        <tr class="border-top">
+                            <th class="text-danger font-weight-bold h5 pt-2">Tổng thanh toán:</th>
+                            <td class="text-right text-danger font-weight-bold h5 pt-2">@(totalOrder.ToString("N0")) đ</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4 border-top pt-3">
+            <div class="col-12">
+                <a href="/Order/History" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="fas fa-arrow-left mr-2"></i>Quay lại lịch sử đơn hàng
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

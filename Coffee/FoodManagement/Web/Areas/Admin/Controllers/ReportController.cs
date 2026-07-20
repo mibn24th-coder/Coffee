@@ -19,19 +19,24 @@ namespace Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> getIncomeByMonth(int year)
         {
-            var items = from k in (from o in _dbContext.Orders.Where(i => i.CreatedOn.Value.Year == year && i.UpdatedOn != null)
-                                   join d in _dbContext.Details on o.Id equals d.OrderId
-                                   select new
-                                   {
-                                       Month = o.CreatedOn.Value.Month,
-                                       Income = d.Amount * d.Price * 1.1 + 30000
-                                   })
+            var items = from k in (
+                            from o in _dbContext.Orders
+                                .Where(i => i.CreatedOn.Value.Year == year && i.UpdatedOn != null)
+                            join d in _dbContext.Details
+                                on o.Id equals d.OrderId
+                            select new
+                            {
+                                Month = o.CreatedOn.Value.Month,
+                                Income = d.Amount * d.Price * 1.1m + 30000m
+                            }
+                        )
                         group k by k.Month into g
                         select new
                         {
                             Months = g.Key,
                             Incomes = g.Sum(p => p.Income)
                         };
+
             return Ok(await items.OrderBy(p => p.Months).ToListAsync());
         }
     }

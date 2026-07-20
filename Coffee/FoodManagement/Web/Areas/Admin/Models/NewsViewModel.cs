@@ -8,5 +8,6 @@
         public string? Content { get; set; }
         public string? Picture { get; set; }
         public string? Keyword { get; set; }
+        public string? Intro { get; set; }
     }
 }

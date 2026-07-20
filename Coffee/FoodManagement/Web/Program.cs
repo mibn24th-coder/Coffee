@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Web.Areas.Admin.Filters;
 using Web.Models.EF;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -5,6 +5,7 @@ using System.Linq.Dynamic.Core;
 using Microsoft.EntityFrameworkCore;
 using Core.Database.Models;
 using Web.Areas.Admin.Extensions;
+using System.Text.RegularExpressions;
 
 namespace Web.Areas.Admin.Controllers
 {
@@ -77,9 +78,9 @@ namespace Web.Areas.Admin.Controllers
                 item.ModifiedBy = loggedMember.Id;
             }
             item.Title = model.Title;
-            item.Intro = model.Intro;
-            item.Content = model.Content;
-            item.Price = model.Price;
+            item.Intro = CleanHtml(model.Intro);
+            item.Content = CleanHtml(model.Content);
+            item.Price = (decimal?)model.Price;
 
             if (Picture != null)
             {
@@ -114,6 +115,25 @@ namespace Web.Areas.Admin.Controllers
                 return Ok(false);
             }
         }
+        ////
+        private string CleanHtml(string? html)
+        {
+            if (string.IsNullOrEmpty(html))
+                return "";
+
+            html = Regex.Replace(html,
+                @"\sdata-path-to-node=""[^""]*""",
+                "",
+                RegexOptions.IgnoreCase);
+
+            html = Regex.Replace(html,
+                @"\sdata-index-in-node=""[^""]*""",
+                "",
+                RegexOptions.IgnoreCase);
+
+            return html;
+        }
+        ////
     }
 }
 

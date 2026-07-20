@@ -1,8 +1,69 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
+﻿@{
+    ViewData["Title"] = "Trang Quản Trị";
     Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
 }
 
+<section class="content" style="padding-top: 15px;">
+    <div class="container-fluid">
+        <!-- Hàng chứa 4 ô thống kê song song -->
+        <div class="row">
 
+            <!-- Ô 1: Sản phẩm (Nước & Kem) -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.TotalProducts</h3>
+                        <p>Sản phẩm (Nước & Kem)</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-ice-cream" style="font-size: 70px; opacity: 0.15; position: absolute; right: 15px; top: 15px;"></i>
+                    </div>
+                    <a href="/Admin/Product" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
 
+            <!-- Ô 2: Đơn đặt hàng -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.TotalOrders</h3>
+                        <p>Đơn đặt hàng</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-shopping-cart" style="font-size: 70px; opacity: 0.15; position: absolute; right: 15px; top: 15px;"></i>
+                    </div>
+                    <a href="/Admin/Order" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Ô 3: Tin tức & Sự kiện -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3 class="text-white">@ViewBag.TotalNews</h3>
+                        <p class="text-white">Tin tức & Sự kiện</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-newspaper" style="font-size: 70px; opacity: 0.15; position: absolute; right: 15px; top: 15px;"></i>
+                    </div>
+                    <a href="/Admin/News" class="small-box-footer" style="color: rgba(255,255,255,0.8) !important;">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Ô 4: Khách hàng đăng ký -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.TotalCustomers</h3>
+                        <p>Khách hàng đăng ký</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-users" style="font-size: 70px; opacity: 0.15; position: absolute; right: 15px; top: 15px;"></i>
+                    </div>
+                    <a href="/Admin/Customer" class="small-box-footer">Xem chi tiết <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

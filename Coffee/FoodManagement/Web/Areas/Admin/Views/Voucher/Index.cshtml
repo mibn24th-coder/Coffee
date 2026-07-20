@@ -1,0 +1,296 @@
+﻿@{
+    ViewData["Title"] = "Quản lý khuyến mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title">Danh sách mã giảm giá</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body table-responsive">
+        <table id="items" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Mã giảm giá</th>
+                    <th>Mức giảm</th>
+                    <th>Đơn tối thiểu</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th style="width: 40px"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- POPUP MODAL ĐỂ THÊM VÀ SỬA VOUCHER -->
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Thông tin khuyến mãi</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="Item">
+                    <input type="hidden" id="Id" name="Id" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Code">Mã giảm giá</label>
+                                <input type="text" class="form-control" id="Code" name="Code" required placeholder="Vd: KHUYENMAI20" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Quantity">Số lượng phát hành</label>
+                                <input type="number" class="form-control" id="Quantity" name="Quantity" required min="1" value="100" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Discount">Giá trị giảm</label>
+                                <input type="number" class="form-control" id="Discount" name="Discount" required min="0" step="0.01" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="IsPercent">Loại giảm giá</label>
+                                <select class="form-control" id="IsPercent" name="IsPercent">
+                                    <option value="true">Giảm theo %</option>
+                                    <option value="false">Giảm theo số tiền cố định (đ)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="MinOrder">Giá trị đơn hàng tối thiểu (đ)</label>
+                                <input type="number" class="form-control" id="MinOrder" name="MinOrder" min="0" step="1000" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="IsActive">Trạng thái áp dụng</label>
+                                <select class="form-control" id="IsActive" name="IsActive">
+                                    <option value="true">Đang kích hoạt</option>
+                                    <option value="false">Tạm ngưng sử dụng</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="StartDate">Ngày bắt đầu</label>
+                                <input type="datetime-local" class="form-control" id="StartDate" name="StartDate" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="EndDate">Ngày kết thúc</label>
+                                <input type="datetime-local" class="form-control" id="EndDate" name="EndDate" required />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary btnSave">Lưu dữ liệu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Css {
+    <link href="/plugins/datatables-bs4/css/datatables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="/plugins/toastr/toastr.min.css" rel="stylesheet" />
+    <link href="/plugins/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <style>
+        div.dt-buttons {
+            float: right;
+        }
+    </style>
+}
+
+@section Js {
+    <script src="/plugins/datatables/jquery.datatables.min.js"></script>
+    <script src="/plugins/datatables-bs4/js/datatables.bootstrap4.min.js"></script>
+    <script src="/plugins/datatables-buttons/js/datatables.buttons.min.js"></script>
+    <script src="/plugins/toastr/toastr.min.js"></script>
+    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="/plugins/moment/moment.min.js"></script>
+
+    <script>
+        $(function() {
+            var items = $("#items").DataTable({
+                "dom": "Blfrtip",
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "/Admin/Voucher/GetList",
+                    "type": "POST",
+                    "dataType": "json",
+                    "error": function (xhr, error, code) {
+                        toastr.error("Lỗi: Không tải được danh sách khuyến mãi.");
+                    }
+                },
+                "columns": [
+                    {
+                        "data": null, "render": function (data, type, row, meta) { return meta.row + 1 }
+                    },
+                    {
+                        "data": "code"
+                    },
+                    {
+                        "data": null, "render": function (data, type, row) {
+                            return row.isPercent ? (row.discount + "%") : (new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.discount));
+                        }
+                    },
+                    {
+                        "data": "minOrder", "render": function (data) {
+                            return data ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data) : "Không yêu cầu";
+                        }
+                    },
+                    {
+                        "data": "startDate", "render": function (data) {
+                            return moment(data).isValid() ? moment(data).format("DD/MM/YYYY HH:mm") : "Chưa cấu hình";
+                        }
+                    },
+                    {
+                        "data": "endDate", "render": function (data) {
+                            return moment(data).isValid() ? moment(data).format("DD/MM/YYYY HH:mm") : "Chưa cấu hình";
+                        }
+                    },
+                    {
+                        "data": "isActive", "render": function (data) {
+                            return data ? '<span class="badge badge-success">Đang áp dụng</span>' : '<span class="badge badge-danger">Tạm khóa</span>';
+                        }
+                    },
+                    {
+                        "render": function (data, type, row) {
+                            let tool = '<div class="btn-group">' +
+                                '<a href="#" data-toggle="dropdown" class="list-icons-item text-dark" aria-expanded="false">' +
+                                '<i class="fas fa-sort-amount-down"></i>' +
+                                '</a>' +
+                                '<div class="dropdown-menu" role="menu">' +
+                                '<a class="dropdown-item text-primary btnEdit" href="#" data-id="' + row.id + '"><i class="fas fa-pencil-alt mr-3"></i>Cập nhật</a>' +
+                                '<a class="dropdown-item text-danger btnDelete" href="#" data-id="' + row.id + '"><i class="fas fa-trash mr-3"></i>Xóa</a>' +
+                                '</div>' +
+                                '</div>';
+                            return tool;
+                        }
+                    }
+                ],
+                "buttons": [
+                    {
+                        text: '<i class="fa fa-plus mr-2"></i>Thêm khuyến mãi',
+                        className: 'btn btn-info pb-1',
+                        action: function (e, dt, node, config) {
+                            $("#modal-default form#Item")[0].reset();
+                            $("#Id").val("");
+
+                            // Gán mặc định ngày bắt đầu là hiện tại, kết thúc là sau 7 ngày
+                            let now = new Date();
+                            let after7Days = new Date();
+                            after7Days.setDate(now.getDate() + 7);
+
+                            $("#StartDate").val(now.toISOString().slice(0,16));
+                            $("#EndDate").val(after7Days.toISOString().slice(0,16));
+
+                            $("#modal-default").modal('show');
+                        }
+                    }
+                ]
+            });
+
+            // SỰ KIỆN CLICK SỬA VOUCHER
+            $(document).on("click", "a.btnEdit", function() {
+                let id = $(this).data("id");
+                $.getJSON("/Admin/Voucher/GetItem", { id: id }, function (item) {
+                    $("#Id").val(item.id);
+                    $("#Code").val(item.code);
+                    $("#Quantity").val(item.quantity);
+                    $("#Discount").val(item.discount);
+                    $("#IsPercent").val(item.isPercent.toString());
+                    $("#MinOrder").val(item.minOrder);
+                    $("#IsActive").val(item.isActive.toString());
+
+                    if(item.startDate) $("#StartDate").val(item.startDate.slice(0, 16));
+                    if(item.endDate) $("#EndDate").val(item.endDate.slice(0, 16));
+
+                    $("#modal-default").modal('show');
+                }).fail(function () {
+                    toastr.error("Lỗi: Không tải được thông tin mã giảm giá này.");
+                });
+            });
+
+            // SỰ KIỆN CLICK LƯU VOUCHER (AJAX POST)
+            $(".btnSave").click(function () {
+                var form = $("#Item")[0];
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                var formData = new FormData(form);
+
+                $.ajax({
+                    data: formData,
+                    url: "/Admin/Voucher/Save",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (item) {
+                        $("#modal-default").modal('hide');
+                        toastr.success("Thông báo: Đã lưu khuyến mãi thành công!");
+                        items.ajax.reload();
+                    },
+                    error: function () {
+                        toastr.error("Lỗi: Lưu dữ liệu không thành công.");
+                    }
+                });
+            });
+
+            // SỰ KIỆN CLICK XÓA VOUCHER
+            $(document).on('click', "a.btnDelete", function() {
+                let id = $(this).data("id");
+                Swal.fire({
+                    title: 'Xóa mã giảm giá?',
+                    text: "Thao tác này không thể hoàn tác lại!",
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xác nhận xóa',
+                    cancelButtonText: 'Hủy'
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        $.get("/Admin/Voucher/Delete", { id: id }, function (data) {
+                            if (data == true) {
+                                toastr.success('Thông báo: Đã xóa khuyến mãi thành công.');
+                                items.ajax.reload();
+                            } else {
+                                toastr.error('Lỗi: Thao tác thất bại.');
+                            }
+                        }).fail(function() {
+                            toastr.error("Lỗi: Không thể kết nối tới server.");
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

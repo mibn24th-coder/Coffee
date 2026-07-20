@@ -17,7 +17,7 @@ namespace Core.Database.Models
         [MaxLength(500)]
         public string? Intro { get; set; }
         public string? Content { get; set; }
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
         public bool? IsComming { get; set; }
         [ForeignKey("CategoryId")]
         public Guid? CategoryId { get; set; }

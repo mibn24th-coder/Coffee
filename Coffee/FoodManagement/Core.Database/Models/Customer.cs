@@ -19,5 +19,7 @@ namespace Core.Database.Models
         public string? LoginName { get; set; }
         public string? Password { get; set; }
         public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+        public string? Email { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

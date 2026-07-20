@@ -21,7 +21,19 @@ namespace Web.Controllers
                         where p.IsComming == true
                         orderby p.CreatedBy descending
                         select p;
-            return Ok(await items.Take(5).Select(i => new {i.Id, i.Picture, i.Title, i.Intro, i.Price}).ToListAsync());
+            return Ok(await items.Select(i => new {i.Id, i.Picture, i.Title, i.Intro, i.Price}).ToListAsync());
+        }
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var product = await _dbContext.Products
+                                          .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
     }
 }

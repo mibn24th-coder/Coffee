@@ -62,18 +62,18 @@
     </style>
 }
 @section Js {
-    <script src="/plugins/datatables/jquery.datatables.min.js"></script>
-    <script src="/plugins/datatables-bs4/js/datatables.bootstrap4.min.js"></script>
     <script src="/plugins/datatables-buttons/js/datatables.buttons.min.js"></script>
     <script src="/plugins/toastr/toastr.min.js"></script>
-	<script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
     <script>
-        $(function() {
-           var items = $("#items").DataTable({
+        $(function () {
+
+            var items = $("#items").DataTable({
                 "dom": "Blfrtip",
                 "processing": true,
                 "serverSide": true,
-                "ajax":{
+                "ajax": {
                     "url": "/Admin/Category/GetList",
                     "data": {
                         parentId: '@Model'
@@ -86,24 +86,28 @@
                 },
                 "columns": [
                     {
-                        "data": null, "render": function (data, type, row,  meta) { return meta.row + 1}
+                        "data": null,
+                        "render": function (data, type, row, meta) {
+                            return meta.row + 1;
+                        }
                     },
                     {
                         "render": function (data, type, row, meta) {
-                            return "<a href='/Admin/Category/?parentId="+ row.id +"'>" + row.name + "</a>";
+                            return "<a href='/Admin/Category/?parentId=" + row.id + "'>" + row.name + "</a>";
                         }
                     },
                     {
                         "render": function (data, type, row, meta) {
                             let tool = '<div class="btn-group">' +
-                                '<a href="#" data-toggle="dropdown" class="list-icons-item text-dark" aria-expanded="false">' +
+                                '<a href="#" data-toggle="dropdown" class="list-icons-item text-dark">' +
                                 '<i class="fas fa-sort-amount-down"></i>' +
                                 '</a>' +
-                                '<div class="dropdown-menu" role="menu" style="">' +
+                                '<div class="dropdown-menu">' +
                                 '<a class="dropdown-item text-primary btnEdit" href="#" data-id="' + row.id + '"><i class="fas fa-pencil-alt mr-3"></i>Cập nhật</a>' +
                                 '<a class="dropdown-item text-danger btnDelete" href="#" data-id="' + row.id + '"><i class="fas fa-trash mr-3"></i>Xóa</a>' +
                                 '</div>' +
                                 '</div>';
+
                             return tool;
                         }
                     }
@@ -115,68 +119,79 @@
                         action: function (e, dt, node, config) {
                             $("#modal-default form#Item")[0].reset();
                             $("#Id").val("");
-                            $("#modal-default").modal('show');
+                            $("#modal-default").modal("show");
                         }
                     }
                 ]
-           });
-           $(document).on("click", "a.btnEdit", function() {
-               let id = $(this).data("id");
-               $.getJSON("/Admin/Category/GetItem",
-               {
-                   id: id
-               }, function (item){
-                   $("#Id").val(item.id);
-                   $("#Name").val(item.name);
-                   $("#modal-default").modal('show');
-               }).fail(function () {
-                   toastr.error("Lỗi: không có quyền truy cập chức năng này.");
-               });
-           });
-           $(".btnSave").click(function () {
-               $.ajax({
-                   data: $("#Item").serialize(),
-                   url: "/Admin/Category/Save",
-                   type: "POST",
-                   contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                   success: function (item) {
-                       $("#modal-default").modal('hide');
-                       toastr.success("Thông báo: Lưu thành công !!");
-                       items.ajax.reload();
-                   },
-                   error: function () {
-                       toastr.error("Lỗi: không có quyền truy cập chức năng này.");
-                   }
-               })
-           })
-           $(document).on('click', "a.btnDelete", function() {
-               let id = $(this).data("id");
-               Swal.fire({
-                   title: 'Bạn chắc không?',
-                   text: "Xóa không thể phục hồi được !",
-                   showCancelButton: true,
-                   confirmButtonColor: '#d33',
-                   cancelButtonColor: '#3085d6',
-                   confirmButtonText: 'Xác nhận',
-                   cancelButtonText: 'Hủy'
-               }).then(function (result) {
-                   if (result.isConfirmed) {
-                       $.get("/Admin/Category/Delete",
-                       {
-                           id: id
-                       }, function (data) {
-                           if (data == true) {
-                               toastr.success('Thông báo: Xóa chuyên mục thành công.');
-                               items.ajax.reload();
-                           } else {
-                               toastr.error('Lỗi: Kiểm tra lại ràng buộc toàn vẹn của chuyên mục.')
-                           }
-                       }).fail(function() {
-                           toastr.error("Lỗi: không có quyền truy cập chức năng này.");
-                       })
-                   }
-               })
-           })
+            });
+
+            $(document).on("click", "a.btnEdit", function () {
+                let id = $(this).data("id");
+
+                $.getJSON("/Admin/Category/GetItem",
+                    {
+                        id: id
+                    },
+                    function (item) {
+                        $("#Id").val(item.id);
+                        $("#Name").val(item.name);
+                        $("#modal-default").modal("show");
+                    }
+                ).fail(function () {
+                    toastr.error("Lỗi: không có quyền truy cập chức năng này.");
+                });
+            });
+
+            $(".btnSave").click(function () {
+                $.ajax({
+                    data: $("#Item").serialize(),
+                    url: "/Admin/Category/Save",
+                    type: "POST",
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    success: function () {
+                        $("#modal-default").modal("hide");
+                        toastr.success("Thông báo: Lưu thành công !!");
+                        items.ajax.reload();
+                    },
+                    error: function () {
+                        toastr.error("Lỗi: không có quyền truy cập chức năng này.");
+                    }
+                });
+            });
+
+            $(document).on("click", "a.btnDelete", function () {
+                let id = $(this).data("id");
+
+                Swal.fire({
+                    title: "Bạn chắc không?",
+                    text: "Xóa không thể phục hồi được !",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Xác nhận",
+                    cancelButtonText: "Hủy"
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        $.get("/Admin/Category/Delete",
+                            {
+                                id: id
+                            },
+                            function (data) {
+                                if (data == true) {
+                                    toastr.success("Thông báo: Xóa chuyên mục thành công.");
+                                    items.ajax.reload();
+                                }
+                                else {
+                                    toastr.error("Lỗi: Kiểm tra lại ràng buộc toàn vẹn của chuyên mục.");
+                                }
+                            }
+                        ).fail(function () {
+                            toastr.error("Lỗi: không có quyền truy cập chức năng này.");
+                        });
+                    }
+                });
+            });
+
         });
     </script>
- }
+}

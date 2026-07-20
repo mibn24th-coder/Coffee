@@ -1,0 +1,126 @@
+﻿@model Web.Models.EF.Contact
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Liên hệ";
+    Layout = "~/Views/Shared/_Site.cshtml";
+
+    // Đọc thông tin Email từ Session hoặc Identity để check
+    var sessionEmail = Context.Session.GetString("UserEmail");
+    var userEmail = !string.IsNullOrEmpty(sessionEmail) ? sessionEmail : (User.Identity?.IsAuthenticated == true ? User.Identity.Name : null);
+}
+
+<!-- Page Header Start -->
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown mb-3">Liên hệ</h1>
+        <nav aria-label="breadcrumb animated slideInDown">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="#">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="#">Trang khác</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">Liên hệ</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container-xxl py-6">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <p class="text-primary text-uppercase mb-2">// LIÊN HỆ VỚI CHÚNG TÔI</p>
+            <h1 class="display-6 mb-4">Mọi Thắc Mắc Hoặc Góp Ý, Xin Vui Lòng Liên Hệ</h1>
+        </div>
+        <div class="row g-0 justify-content-center">
+            <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+                <p class="text-center mb-4">Hãy để lại thông tin và lời nhắn bên dưới, đội ngũ hỗ trợ của Coffee House sẽ phản hồi bạn trong thời gian sớm nhất.</p>
+
+                <form id="contactForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" placeholder="Họ và tên của bạn" required>
+                                <label for="name">Họ và tên của bạn</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                @if (!string.IsNullOrEmpty(userEmail))
+                                {
+                                    <!-- NẾU ĐÃ ĐĂNG NHẬP: Tự điền Email của tài khoản và khóa (readonly) -->
+                                    <input type="email" class="form-control bg-light" id="email" value="@userEmail" readonly required>
+                                }
+                                else
+                                {
+                                    <!-- NẾU CHƯA ĐĂNG NHẬP: Bắt khách hàng tự nhập tay -->
+                                    <input type="email" class="form-control" id="email" placeholder="Địa chỉ Email" required>
+                                }
+                                <label for="email">Địa chỉ Email</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="subject" placeholder="Tiêu đề lời nhắn" required>
+                                <label for="subject">Tiêu đề lời nhắn</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Nội dung tin nhắn..." id="message" style="height: 200px" required></textarea>
+                                <label for="message">Nội dung tin nhắn...</label>
+                            </div>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Gửi Lời Nhắn</button>
+                            <a href="/CheckReply" class="btn btn-outline-dark rounded-pill py-3 px-5 ms-2">Xem Phản Hồi</a>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xxl py-6 px-0 wow fadeInUp" data-wow-delay="0.1s">
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#contactForm").submit(function (e) {
+            e.preventDefault();
+
+            var model = {
+                Name: $("#name").val(),
+                Email: $("#email").val(), // Thuộc tính này sẽ tự lấy giá trị readonly nếu đã đăng nhập
+                Title: $("#subject").val(),
+                Message: $("#message").val()
+            };
+
+            $.ajax({
+                url: '/Home/SendContact',
+                type: 'POST',
+                data: model,
+                success: function (res) {
+                    if (res.success) {
+                        alert(res.message);
+
+                        // Reset lại form nhưng giữ nguyên giá trị Email nếu đang đăng nhập
+                        var currentEmail = $("#email").val();
+                        var isReadOnly = $("#email").prop("readonly");
+
+                        $("#contactForm")[0].reset();
+
+                        if (isReadOnly) {
+                            $("#email").val(currentEmail);
+                        }
+                    } else {
+                        alert(res.message);
+                    }
+                },
+                error: function () {
+                    alert("Có lỗi xảy ra kết nối đến hệ thống!");
+                }
+            });
+        });
+    });
+</script>

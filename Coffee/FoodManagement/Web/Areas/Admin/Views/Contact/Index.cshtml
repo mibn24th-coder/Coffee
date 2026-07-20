@@ -1,0 +1,128 @@
+﻿@model List<Web.Models.EF.Contact>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Admin.cshtml"; // Đường dẫn Layout Admin của bạn
+    ViewData["Title"] = "Quản lý liên hệ";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-dark">
+        <h6 class="m-0 font-weight-bold text-white">Danh Sách Tin Nhắn Liên Hệ</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Khách hàng</th>
+                        <th>Nội dung gửi</th>
+                        <th>Ngày gửi</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.Name</strong><br />
+                                <small class="text-muted">@item.Email</small>
+                            </td>
+                            <td>
+                                <strong>@item.Title</strong><br />
+                                <span class="text-secondary">@item.Message</span>
+
+                                @if (item.IsReplied)
+                                {
+                                    <div class="mt-2 p-2 bg-light text-success rounded" style="font-size: 13px;">
+                                        <strong>Đã trả lời:</strong> @item.ReplyMessage
+                                    </div>
+                                }
+                            </td>
+                            <td>@item.CreatedOn.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                @if (item.IsReplied)
+                                {
+                                    <span class="badge bg-success text-white">Đã phản hồi</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger text-white">Chưa trả lời</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm btn-reply"
+                                        data-id="@item.Id"
+                                        data-msg="@item.Message"
+                                        data-reply="@item.ReplyMessage">
+                                    <i class="fas fa-reply"></i> Trả lời
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL POPUP PHẢN HỒI -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gửi phản hồi cho khách hàng</h5>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalContactId" />
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Câu hỏi của khách:</label>
+                    <p id="modalCustomerMsg" class="p-2 bg-light rounded text-muted" style="font-style: italic;"></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label font-weight-bold">Nội dung phản hồi:</label>
+                    <textarea id="modalReplyText" class="form-control" rows="4" placeholder="Nhập lời nhắn phản hồi..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" id="btnConfirmReply" class="btn btn-success">Lưu & Gửi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT XỬ LÝ POPUP VÀ AJAX GỬI PHẢN HỒI -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Bắt sự kiện nhấn nút Trả lời để đẩy dữ liệu lên Modal popup
+        $(".btn-reply").click(function () {
+            var id = $(this).data("id");
+            var msg = $(this).data("msg");
+            var reply = $(this).data("reply");
+
+            $("#modalContactId").val(id);
+            $("#modalCustomerMsg").text(msg);
+            $("#modalReplyText").val(reply);
+
+            var myModal = new bootstrap.Modal(document.getElementById('replyModal'));
+            myModal.show();
+        });
+
+        // Xử lý gửi nội dung phản hồi bằng AJAX lên đường dẫn mới /Admin/Contact/Reply
+        $("#btnConfirmReply").click(function () {
+            var id = $("#modalContactId").val();
+            var text = $("#modalReplyText").val();
+
+            $.post("/Admin/Contact/Reply", { id: id, replyMessage: text }, function (res) {
+                if (res.success) {
+                    alert("Đã lưu nội dung phản hồi thành công!");
+                    location.reload();
+                } else {
+                    alert(res.message);
+                }
+            });
+        });
+    });
+</script>

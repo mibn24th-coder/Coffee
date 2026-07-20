@@ -1,0 +1,66 @@
+﻿@model List<Core.Database.Models.Article>
+
+@{
+    ViewData["Title"] = "Tin tức";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown">
+            Tin tức
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">
+                    Tin tức
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-5">
+
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+
+                <div class="card shadow-sm">
+
+                    <img src="@item.Picture"
+                         class="card-img-top"
+                         style="height:220px;object-fit:cover;" />
+
+                    <div class="card-body">
+
+                        <h5>@item.Title</h5>
+
+                        <p>@item.Description</p>
+
+                        <small class="text-muted">
+                            @(item.CreatedOn?.ToString("dd/MM/yyyy"))
+                        </small>
+
+                        <br /><br />
+
+                        <a asp-controller="News"
+                           asp-action="Detail"
+                           asp-route-id="@item.Id"
+                           class="btn btn-primary">
+
+                            Xem chi tiết
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

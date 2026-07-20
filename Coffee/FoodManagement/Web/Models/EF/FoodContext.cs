@@ -119,5 +119,7 @@ namespace Web.Models.EF
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Details> Details { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
     }
 }

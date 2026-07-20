@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Core.Database.Models.Order>
+@{
+    ViewData["Title"] = "Lịch sử đơn hàng";
+    Layout = "~/Views/Shared/_Site.cshtml";
+}
+<div class="container-fluid page-header py-6 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown">
+            Lịch sử đơn hàng
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a class="text-white" href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a class="text-white" href="/Order/History">Lịch sử đơn hàng</a></li>
+                <li class="breadcrumb-item text-primary active" aria-current="page">
+                    Lịch sử đơn hàng
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container my-5" style="min-height: 450px;">
+    <h3 class="mb-4 font-weight-bold text-secondary text-uppercase">Lịch sử đơn hàng</h3>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info shadow-sm p-4 text-center rounded">
+            <p class="mb-0">Bạn chưa đặt bất kỳ đơn hàng nào.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="thead-dark text-uppercase small">
+                        <tr>
+                            <th class="pl-4">Mã hóa đơn</th>
+                            <th>Ngày đặt</th>
+                            <th>Ngày cập nhật</th>
+                            <th>Trạng thái</th>
+                            <th class="text-right pr-4">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td class="pl-4 font-weight-bold text-primary">
+                                    #@order.Id.ToString().Substring(0, 8).ToUpper()
+                                </td>
+                                <td>@(order.CreatedOn.HasValue ? order.CreatedOn.Value.ToString("dd/MM/yyyy HH:mm") : "---")</td>
+                                <td>@(order.UpdatedOn.HasValue ? order.UpdatedOn.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa cập nhật")</td>
+                                <td>
+                                    @if (order.Status == "Đang giao")
+                                    {
+                                        <span class="badge bg-primary p-2 text-white">Đang giao</span>
+                                    }
+                                    else if (order.Status == "Đang chuẩn bị")
+                                    {
+                                        <span class="badge bg-info p-2 text-dark">Đang chuẩn bị</span>
+                                    }
+                                    else if (order.Status == "Đã hoàn thành")
+                                    {
+                                        <span class="badge bg-success p-2 text-white">Đã hoàn thành</span>
+                                    }
+                                    else if (order.Status == "Đã hủy")
+                                    {
+                                        <span class="badge bg-danger p-2 text-white">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning p-2 text-dark">@(order.Status ?? "Chờ duyệt")</span>
+                                    }
+                                </td>
+                                <td class="text-right pr-4">
+                                    <a href="/Order/Details?id=@order.Id" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                        <i class="fas fa-eye mr-1"></i> Xem chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

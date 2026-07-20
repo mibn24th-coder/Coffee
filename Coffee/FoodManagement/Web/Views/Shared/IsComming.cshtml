@@ -3,14 +3,14 @@
     <div class="container">
         <div class="bg-primary text-light rounded-bottom p-5 my-6 mt-0 wow fadeInUp" data-wow-delay="0.1s">
             <div class="row g-4 align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="display-4 text-light mb-0">The Best Bakery In Your City</h1>
+                <div class="col-lg-6 align-self-center">
+                    <h1 class="fs-2 text-light mb-0">Hương Vị Tuyệt Vời – Đánh Thức Mọi Giác Quan</h1>
                 </div>
                 <div class="col-lg-6 text-lg-end">
                     <div class="d-inline-flex align-items-center text-start">
                         <i class="fa fa-phone-alt fa-4x flex-shrink-0"></i>
                         <div class="ms-4">
-                            <p class="fs-5 fw-bold mb-0">Call Us</p>
+                            <p class="fs-5 fw-bold mb-0">Hotline:</p>
                             <p class="fs-1 fw-bold mb-0">+012 345 6789</p>
                         </div>
                     </div>
@@ -18,8 +18,8 @@
             </div>
         </div>
         <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
-            <p class="text-primary text-uppercase fs-4 mb-2">Sắp ra mắt</p>
-            <h1 class="display-6 mb-4">Các loại sản phẩm sắp ra mắt</h1>
+            <p class="text-primary text-uppercase fs-4 mb-2">Sản phẩm</p>
+            <h1 class="display-6 mb-4">Những dòng sản phẩm mới nhất không thể bỏ lỡ</h1>
         </div>
         <div class="row g-4 IsComming">
         </div>
@@ -36,17 +36,84 @@
                                             '<div class="text-center p-4">' +
                                                 '<div class="d-inline-block border border-primary rounded-pill px-3 mb-3">'+ product.price +'đ</div>' +
                                                 '<h3 class="mb-3">'+ product.title +'</h3>' +
-                                                '<span>'+ product.intro +'</span>' +
                                             '</div>' +
                                             '<div class="position-relative mt-auto">' +
-                                                '<img class="img-fluid" src="'+ product.picture +'" alt="" style="height: 350px; object-fit: cover; width: 100%;">' +
-                                                '<div class="product-overlay">' +
-                                                    '<a class="btn btn-lg-square btn-outline-light rounded-circle" href="/Product/Details?id='+ product.id +'"><i class="fa fa-eye text-primary"></i></a>' +
-                                                '</div>' +
+                                                '<img class="img-fluid" src="'+ product.picture +'" alt="" style="width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center 85%; padding: 45px; background-color: #ffffff;">' +
+                                                        '<div class="product-overlay">' +
+                                                            '<a href="#" class="btn btn-primary me-2 add-cart" data-id="' + product.id + '">' +
+                                                                '<i class="fa fa-shopping-cart"></i> Thêm vào giỏ hàng' +
+                                                            '</a>' +
+                                                        '<a class="btn btn-lg-square btn-outline-light rounded-circle" href="/Product/Details?id=' + product.id + '">' +
+                                                            '<i class="fa fa-eye text-primary"></i>' +
+                                                        '</a>' +
+
+                                                    '</div>' +
                                             '</div>' +
                                         '</div>' +
-                                    '</div>');
-                })
-            })
+                    '</div>');
+                });
+            });
+        
     });
+    $(document).on("click", ".add-cart", function (e) {
+
+        e.preventDefault();
+
+        var id = $(this).data("id");
+
+        console.log("Đã click", id);
+
+        $.post("/Cart/Add", { id: id }, function (res) {
+
+            console.log("Server trả về:", res);
+
+            if (res.login) {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Bạn chưa đăng nhập",
+                    text: "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng.",
+                    confirmButtonText: "Đăng nhập"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        window.location = "/Account/Login";
+                    }
+
+                });
+
+                return;
+            }
+
+            if (res.success) {
+
+                LoadCartCount();
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Đã thêm vào giỏ hàng",
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+
+            }
+
+        }).fail(function (xhr) {
+
+            console.log("Lỗi:", xhr);
+
+        });
+
+    });
+
+    function LoadCartCount() {
+
+        $.get("/Cart/GetCount", function (count) {
+
+            $("#cart-count").text(count);
+
+        });
+
+    }
+
 </script>

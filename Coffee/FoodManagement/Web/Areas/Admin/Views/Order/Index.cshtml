@@ -16,6 +16,7 @@
                     <th>Tên khách hàng</th>
                     <th>Ngày đặt</th>
                     <th>Ngày thanh toán</th>
+                    <th>Trạng thái</th>
                     <th style="width: 40px"></th>
                 </tr>
             </thead>
@@ -73,13 +74,43 @@
                         }
                     },
                     {
+                        "data": "status",
+                        "render": function (data, type, row, meta) {
+
+                            if(data == "Đang giao")
+                            {
+                                return '<span class="badge badge-primary">'+data+'</span>';
+                            }
+                            else if(data == "Đang chuẩn bị")
+                            {
+                                return '<span class="badge badge-success">'+data+'</span>';
+                            }
+                            else if(data == "Đã hoàn thành")
+                            {
+                                return '<span class="badge badge-success">'+data+'</span>';
+                            }
+                            else if(data == "Đã hủy")
+                            {
+                                return '<span class="badge badge-danger">'+data+'</span>';
+                            }
+                            else
+                            {
+                                return '<span class="badge badge-warning">'+(data ?? "Chờ duyệt")+'</span>';
+                            }
+                        }
+                    },
+                    {
                         "render": function (data, type, row, meta) {
                             let tool = '<div class="btn-group">' +
                                 '<a href="#" data-toggle="dropdown" class="list-icons-item text-dark" aria-expanded="false">' +
                                 '<i class="fas fa-sort-amount-down"></i>' +
                                 '</a>' +
-                                '<div class="dropdown-menu" role="menu" style="">' +
-                                '<a class="dropdown-item text-primary btnEdit" href="#" data-id="' + row.id + '"><i class="fas fa-pencil-alt mr-3"></i>Cập nhật</a>' +
+                                '<div class="dropdown-menu">' +
+                                '<a class="dropdown-item text-primary btnEdit" href="#" data-id="' + row.id + '">' +
+                                '<i class="fas fa-pencil-alt mr-2"></i>Cập nhật' +
+                                '</a>' +
+                               
+                                '<div class="dropdown-divider"></div>' +
                                 '<a class="dropdown-item text-danger btnDelete" href="#" data-id="' + row.id + '"><i class="fas fa-trash mr-3"></i>Xóa</a>' +
                                 '</div>' +
                                 '</div>';
@@ -116,6 +147,51 @@
                    }
                })
            })
+           $(document).on("click", ".btnEdit", function (e) {
+
+                e.preventDefault();
+
+                let id = $(this).data("id");
+
+                Swal.fire({
+                    title: "Cập nhật trạng thái",
+                    input: "select",
+                    inputOptions: {
+                        "Chờ duyệt": "Chờ duyệt",
+                        "Đang chuẩn bị": "Đang chuẩn bị",
+                        "Đang giao": "Đang giao",
+                        "Đã hoàn thành": "Đã hoàn thành",
+                        "Đã hủy": "Đã hủy"
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: "Lưu",
+                    cancelButtonText: "Hủy"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        $.post("/Admin/Order/UpdateStatus",
+                        {
+                            id: id,
+                            status: result.value
+                        },
+                        function (data) {
+
+                            if (data) {
+                                toastr.success("Cập nhật thành công");
+                                items.ajax.reload();
+                            } else {
+                                toastr.error("Cập nhật thất bại");
+                            }
+
+                        });
+
+                    }
+
+                });
+
+           });
+          
         });
     </script>
 }

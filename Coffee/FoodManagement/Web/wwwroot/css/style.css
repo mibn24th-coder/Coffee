@@ -1,4 +1,4 @@
-/********** Template CSS **********/
+﻿/********** Template CSS **********/
 :root {
     --primary: #EAA636;
     --secondary: #545454;
@@ -209,7 +209,7 @@ h6,
 
 .page-header {
     margin-bottom: 6rem;
-    background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(../img/carousel-1.jpg) center center no-repeat;
+    background: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .5)), url(../img/banner2.jpg) center center no-repeat;
     background-size: cover;
 }
 
@@ -414,4 +414,33 @@ h6,
 
 .copyright a:hover {
     color: var(--light);
+}
+/*//////*/
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+    display: none;
+}
+
+.dropdown-submenu.show > .dropdown-menu {
+    display: block;
+}
+/*** Căn chỉnh ảnh Đội ngũ bằng nhau ***/
+.team-item img {
+    width: 100%; /* Chiều rộng bằng khung chứa */
+    height: 350px; /* Bạn có thể tăng/giảm số này để chỉnh độ cao */
+    object-fit: cover; /* Tự động cắt ảnh để lấp đầy mà không méo */
+    object-position: top; /* Giữ phần đầu nhân vật ở giữa khung */
+}
+/*** Ép tất cả ảnh trong phần team có kích thước bằng nhau ***/
+.team-item img.img-fluid {
+    width: 100% !important;
+    height: 350px !important; /* Thay đổi số này theo ý bạn */
+    object-fit: cover !important;
+    object-position: top center !important;
 }

@@ -21,5 +21,6 @@ namespace Core.Database.Models
         public DateTime? ModifiedOn { get; set; }
         public string? Keyword { get; set; }
         public string? Description { get; set; }
+        public string? Intro { get; set; }
     }
 }

@@ -15,9 +15,9 @@ namespace Core.Database.Models
         public Guid Id { get; set; }
         [ForeignKey("OrderId")]
         public Guid? OrderId { get; set; }
-        [ForeignKey("OrderId")]
+        [ForeignKey("ProductId")]
         public Guid? ProductId { get; set; }
-        public double? Price { get; set; } = 0;
+        public decimal? Price { get; set; } = 0;
         public int? Amount { get; set; } = 0;
         public Order? Order { get; set; }
         public Product? Product { get; set; }

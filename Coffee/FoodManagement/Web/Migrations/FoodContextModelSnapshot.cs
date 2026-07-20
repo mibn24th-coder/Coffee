@@ -40,6 +40,9 @@ namespace Web.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Intro")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Keyword")
                         .HasColumnType("nvarchar(max)");
 
@@ -86,7 +89,7 @@ namespace Web.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ed8fc291-be29-4f0f-8432-896005dc39b8"),
+                            Id = new Guid("f1ec845c-8478-409c-b33a-04960a226740"),
                             GroupId = new Guid("eb6b4076-ae9a-4d83-9522-f71760bf27b4"),
                             RoleId = new Guid("b643e139-b6bf-41d7-a251-ad3bd2ae5574")
                         });
@@ -129,14 +132,14 @@ namespace Web.Migrations
                         {
                             Id = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(241),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(831),
                             Name = "Root"
                         },
                         new
                         {
                             Id = new Guid("4d84c1f5-3daa-439a-93cd-8b60dc29192d"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(244),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(834),
                             Name = "Authorized",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         },
@@ -144,7 +147,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("fe7f810c-72b9-44cb-ab4b-3faf28cdc443"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(247),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(838),
                             Name = "Nhóm quyền",
                             ParentId = new Guid("4d84c1f5-3daa-439a-93cd-8b60dc29192d")
                         },
@@ -152,7 +155,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("348b75cd-56a7-4094-97f1-284ab85c3ab9"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(250),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(841),
                             Name = "Article",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         },
@@ -160,7 +163,7 @@ namespace Web.Migrations
                         {
                             Id = new Guid("d4f86670-a689-4cc2-90df-0e89ba79276d"),
                             CreatedBy = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(254),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(844),
                             Name = "Product",
                             ParentId = new Guid("f3dadf45-7db1-4ec9-89bc-f29eed14d099")
                         });
@@ -173,6 +176,12 @@ namespace Web.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LoginName")
@@ -204,8 +213,8 @@ namespace Web.Migrations
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid?>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -297,7 +306,7 @@ namespace Web.Migrations
                         new
                         {
                             Id = new Guid("98d64f50-d8ce-4c84-90cc-4131af413f2a"),
-                            CreatedOn = new DateTime(2026, 7, 2, 21, 13, 41, 8, DateTimeKind.Local).AddTicks(193),
+                            CreatedOn = new DateTime(2026, 7, 18, 14, 44, 43, 482, DateTimeKind.Local).AddTicks(776),
                             Email = "mibn.24th@sv.dla.edu.vn",
                             GroupId = new Guid("eb6b4076-ae9a-4d83-9522-f71760bf27b4"),
                             LoginName = "bui.mi",
@@ -316,8 +325,17 @@ namespace Web.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("CustomerId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("DiscountCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
@@ -364,8 +382,8 @@ namespace Web.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<double?>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -435,6 +453,92 @@ namespace Web.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Core.Database.Models.Voucher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPercent")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("MinOrder")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("Web.Models.EF.Contact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsReplied")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReplyMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReplyOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contacts");
+                });
+
             modelBuilder.Entity("Core.Database.Models.Authorized", b =>
                 {
                     b.HasOne("Core.Database.Models.Group", "Group")
@@ -487,7 +591,9 @@ namespace Web.Migrations
                 {
                     b.HasOne("Core.Database.Models.Customer", "Customer")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
                 });
